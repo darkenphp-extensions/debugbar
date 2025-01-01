@@ -1,0 +1,110 @@
+#!/usr/bin/env php
+<?php
+
+use Darken\Console\Application;
+use Darken\Config\ConfigHelperTrait;
+use Darken\Config\ConfigInterface;
+use Darken\Service\ContainerService;
+use Darken\Service\ContainerServiceInterface;
+use Darken\Service\EventService;
+use Darken\Service\EventServiceInterface;
+use Darken\Service\ExtensionService;
+use Darken\Service\ExtensionServiceInterface;
+use Darken\Service\MiddlewareService;
+use Darken\Service\MiddlewareServiceInterface;
+
+require __DIR__ . '/vendor/autoload.php';
+
+$config = new class implements ConfigInterface, ContainerServiceInterface, EventServiceInterface, MiddlewareServiceInterface, ExtensionServiceInterface {
+
+    use ConfigHelperTrait;
+
+    /**
+     * Register services for dependency injection.
+     * 
+     * If no services are required, this method and the `ContainerServiceInterface`
+     * can be safely removed.
+     */
+    public function containers(ContainerService $service): ContainerService
+    {
+        return $service;
+    }
+
+    /**
+     * Register an event you like to listen to.
+     * 
+     * If no events are required, this method and the `EventServiceInterface`
+     * can be safely removed.
+     */
+    public function events(EventService $service): EventService
+    {
+        return $service;
+    }
+
+    /**
+     * Register extensions to be used in the application.
+     * 
+     * If no extensions are required, this method and the `ExtensionServiceInterface`
+     * can be safely removed.
+     */
+    public function extensions(ExtensionService $service): ExtensionService
+    {
+        return $service;
+    }
+
+    /**
+     * Register application wide middlewares.
+     * 
+     * If no middlewares are required, this method and the `MiddlewareServiceInterface`
+     * can be safely removed.
+     */
+    public function middlewares(MiddlewareService $service): MiddlewareService
+    {
+        return $service;
+    }
+
+    /**
+     * Get the root directory path of the extension.
+     */
+    public function getRootDirectoryPath(): string
+    {
+        return $this->path(getcwd());
+    }
+
+    /**
+     * Enable Debug for local build process.
+     */
+    public function getDebugMode(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the output folder for build artifacts.
+     */
+    public function getBuildOutputFolder(): string
+    {
+        return $this->getRootDirectoryPath() . DIRECTORY_SEPARATOR . '.build';
+    }
+
+    /**
+     * Get the namespace for build output.
+     */
+    public function getBuildOutputNamespace(): string
+    {
+        return 'MyExtension\\Build';
+    }
+
+    /**
+     * Get a list of folders involved in the building process.
+     */
+    public function getBuildingFolders(): array
+    {
+        return [
+            $this->getRootDirectoryPath() . DIRECTORY_SEPARATOR . 'Components'
+        ];
+    }
+};
+
+(new Application($config))
+    ->run();

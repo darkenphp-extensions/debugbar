@@ -1,0 +1,20 @@
+{
+    "name": "darkenphp/extension",
+    "description": "A Darken boilerplate for creating a new extension.",
+    "type": "extension",
+    "require": {
+        "darkenphp/framework": "dev-main"
+    },
+    "autoload": {
+        "psr-4": {
+            "MyExtension\\Build\\" : ".build"
+        }
+    },
+    "scripts": {
+        "build": "@php darken build --clear",
+        "watch": "@php darken watch --clear"
+    },
+    "config": {
+        "process-timeout": 0
+    }
+}
