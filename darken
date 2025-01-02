@@ -94,7 +94,7 @@ $config = new class implements ConfigInterface, ContainerServiceInterface, Event
      */
     public function getBuildOutputNamespace(): string
     {
-        return 'Dakren\\Debugbar\\Build';
+        return 'Darken\\Debugbar\\Build';
     }
 
     /**
