@@ -54,7 +54,7 @@ $config = new class implements ConfigInterface, ContainerServiceInterface, Event
             $assetsVendor = $assetsFolder . DIRECTORY_SEPARATOR . 'debugbar';
             FileHelper::ensureDirectory($assetsVendor);
 
-            $jsRenderer = $this->getDebugBar()->getJavascriptRenderer();
+            $jsRenderer = (new StandardDebugBar())->getJavascriptRenderer();
             //$jsRenderer->setBasePath('/Resources/vendor/');
             
             $assets = $jsRenderer->getAssets();
