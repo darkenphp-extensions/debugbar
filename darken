@@ -4,6 +4,8 @@
 use Darken\Console\Application;
 use Darken\Config\ConfigHelperTrait;
 use Darken\Config\ConfigInterface;
+use Darken\Debugbar\DebugBarMiddleware;
+use Darken\Enum\MiddlewarePosition;
 use Darken\Service\ContainerService;
 use Darken\Service\ContainerServiceInterface;
 use Darken\Service\EventService;
@@ -60,7 +62,7 @@ $config = new class implements ConfigInterface, ContainerServiceInterface, Event
      */
     public function middlewares(MiddlewareService $service): MiddlewareService
     {
-        return $service;
+        return $service->add(new DebugBarMiddleware(), MiddlewarePosition::AFTER);
     }
 
     /**
@@ -92,7 +94,7 @@ $config = new class implements ConfigInterface, ContainerServiceInterface, Event
      */
     public function getBuildOutputNamespace(): string
     {
-        return 'MyExtension\\Build';
+        return 'Dakren\\Debugbar\\Build';
     }
 
     /**
@@ -100,9 +102,7 @@ $config = new class implements ConfigInterface, ContainerServiceInterface, Event
      */
     public function getBuildingFolders(): array
     {
-        return [
-            $this->getRootDirectoryPath() . DIRECTORY_SEPARATOR . 'Components'
-        ];
+        return [];
     }
 };
 

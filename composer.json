@@ -1,13 +1,15 @@
 {
-    "name": "darkenphp/extension",
+    "name": "darkenphp/debugbar",
     "description": "A Darken boilerplate for creating a new extension.",
     "type": "extension",
     "require": {
-        "darkenphp/framework": "dev-main"
+        "darkenphp/framework": "dev-main",
+        "maximebf/debugbar": "^1.23"
     },
     "autoload": {
         "psr-4": {
-            "MyExtension\\Build\\" : ".build"
+            "Darken\\Debugbar\\Build\\" : ".build",
+            "Darken\\Debugbar\\" : "src"
         }
     },
     "scripts": {
