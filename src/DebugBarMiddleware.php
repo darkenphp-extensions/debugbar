@@ -10,8 +10,11 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class DebugBarMiddleware implements MiddlewareInterface
 {
-    public function __construct(private StandardDebugBar $debugBar)
+    private StandardDebugBar $debugBar;
+
+    public function __construct()
     {
+        $this->debugBar = new StandardDebugBar();
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface

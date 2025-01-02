@@ -8,8 +8,7 @@ use Yiisoft\Files\FileHelper;
 
 class SaveAssetsAfterBuild
 {
-    // TODO: framework needs to support array event defintion
-    public function run (AfterBuildEvent $event) {
+    public static function handle (AfterBuildEvent $event) {
         // how could we directly get acces to public folder?
         $assetsFolder = $event->app->config->getRootDirectoryPath() . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'assets';
 

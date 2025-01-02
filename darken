@@ -5,6 +5,7 @@ use Darken\Console\Application;
 use Darken\Config\ConfigHelperTrait;
 use Darken\Config\ConfigInterface;
 use Darken\Debugbar\DebugBarMiddleware;
+use Darken\Debugbar\SaveAssetsAfterBuild;
 use Darken\Enum\MiddlewarePosition;
 use Darken\Events\AfterBuildEvent;
 use Darken\Service\ContainerService;
@@ -43,40 +44,7 @@ $config = new class implements ConfigInterface, ContainerServiceInterface, Event
      */
     public function events(EventService $service): EventService
     {
-        return $service->on(AfterBuildEvent::class, function (AfterBuildEvent $event) {
-            // how could we directly get acces to public folder?
-            $assetsFolder = $event->app->config->getRootDirectoryPath() . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'assets';
-
-            //if (!file_exists($assetsFolder)) {
-            //    return;
-            //}
-
-            $assetsVendor = $assetsFolder . DIRECTORY_SEPARATOR . 'debugbar';
-            FileHelper::ensureDirectory($assetsVendor);
-
-            $jsRenderer = (new StandardDebugBar())->getJavascriptRenderer();
-            //$jsRenderer->setBasePath('/Resources/vendor/');
-            
-            $assets = $jsRenderer->getAssets();
-
-            foreach ($assets as $types) {
-                foreach ($types as $file) {
-                    $sourceFile = $file;
-
-                    $targetFile = str_replace($jsRenderer->getBasePath(), '', $sourceFile);
-                    
-                    echo $sourceFile . ' -> ' . $targetFile . PHP_EOL;
-
-                    FileHelper::copyFile($sourceFile, $assetsVendor . DIRECTORY_SEPARATOR . $targetFile);
-                }
-            }
-        });
-    }
-
-    public function getDebugBar() : StandardDebugBar
-    {
-        // use di ... but for now
-        return new StandardDebugBar();
+        return $service->on(AfterBuildEvent::class, [SaveAssetsAfterBuild::class, 'handle']);
     }
 
     /**
@@ -87,7 +55,7 @@ $config = new class implements ConfigInterface, ContainerServiceInterface, Event
      */
     public function middlewares(MiddlewareService $service): MiddlewareService
     {
-        return $service->add(new DebugBarMiddleware($this->getDebugBar()), MiddlewarePosition::AFTER);
+        return $service->add(new DebugBarMiddleware(), MiddlewarePosition::AFTER);
     }
 
     /**
