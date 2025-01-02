@@ -4,6 +4,7 @@
 use Darken\Console\Application;
 use Darken\Config\ConfigHelperTrait;
 use Darken\Config\ConfigInterface;
+use Darken\Debugbar\DebugBar;
 use Darken\Debugbar\DebugBarMiddleware;
 use Darken\Debugbar\SaveAssetsAfterBuild;
 use Darken\Enum\MiddlewarePosition;
@@ -12,12 +13,8 @@ use Darken\Service\ContainerService;
 use Darken\Service\ContainerServiceInterface;
 use Darken\Service\EventService;
 use Darken\Service\EventServiceInterface;
-use Darken\Service\ExtensionService;
-use Darken\Service\ExtensionServiceInterface;
 use Darken\Service\MiddlewareService;
 use Darken\Service\MiddlewareServiceInterface;
-use DebugBar\StandardDebugBar;
-use Yiisoft\Files\FileHelper;
 
 require __DIR__ . '/vendor/autoload.php';
 
@@ -33,7 +30,8 @@ $config = new class implements ConfigInterface, ContainerServiceInterface, Event
      */
     public function containers(ContainerService $service): ContainerService
     {
-        return $service;
+        return $service
+            ->register(DebugBar::class);
     }
 
     /**
@@ -44,7 +42,8 @@ $config = new class implements ConfigInterface, ContainerServiceInterface, Event
      */
     public function events(EventService $service): EventService
     {
-        return $service->on(AfterBuildEvent::class, [SaveAssetsAfterBuild::class, 'handle']);
+        return $service
+            ->on(AfterBuildEvent::class, SaveAssetsAfterBuild::class);
     }
 
     /**
@@ -55,7 +54,8 @@ $config = new class implements ConfigInterface, ContainerServiceInterface, Event
      */
     public function middlewares(MiddlewareService $service): MiddlewareService
     {
-        return $service->add(new DebugBarMiddleware(), MiddlewarePosition::AFTER);
+        return $service
+            ->register(DebugBarMiddleware::class, MiddlewarePosition::AFTER);
     }
 
     /**

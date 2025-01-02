@@ -10,17 +10,15 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class DebugBarMiddleware implements MiddlewareInterface
 {
-    private StandardDebugBar $debugBar;
-
-    public function __construct()
+    public function __construct(protected DebugBar $debugBar)
     {
-        $this->debugBar = new StandardDebugBar();
+        
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         // Add a debug message
-        // $this->debugBar["messages"]->addMessage("Middleware invoked");
+        $this->debugBar["messages"]->addMessage("Middleware invoked with request: " . $request->getUri());
 
         // Proceed to the next middleware or handler and get the response
         $response = $handler->handle($request);
