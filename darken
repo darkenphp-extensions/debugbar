@@ -4,7 +4,7 @@
 use Darken\Console\Application;
 use Darken\Config\ConfigHelperTrait;
 use Darken\Config\ConfigInterface;
-use Darken\Debugbar\DebugBar;
+use Darken\Debugbar\DebugBarConfig;
 use Darken\Debugbar\DebugBarMiddleware;
 use Darken\Debugbar\SaveAssetsAfterBuild;
 use Darken\Enum\MiddlewarePosition;
@@ -31,7 +31,7 @@ $config = new class implements ConfigInterface, ContainerServiceInterface, Event
     public function containers(ContainerService $service): ContainerService
     {
         return $service
-            ->register(DebugBar::class);
+            ->register(DebugBarConfig::class);
     }
 
     /**

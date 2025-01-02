@@ -4,6 +4,10 @@ namespace Darken\Debugbar\Build;
 
 class Extension extends \Darken\Service\Extension
 {
+    public function __construct(\Darken\Debugbar\DebugBarConfig $debugBarConfig) {
+            $this->registerDefinition('Darken\Debugbar\DebugBarConfig', $debugBarConfig);
+        }
+
     public function getClassMap(): array
     {
         return array (

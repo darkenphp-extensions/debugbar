@@ -2,7 +2,6 @@
 
 namespace Darken\Debugbar;
 
-use DebugBar\StandardDebugBar;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -10,15 +9,16 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class DebugBarMiddleware implements MiddlewareInterface
 {
-    public function __construct(protected DebugBar $debugBar)
+    public function __construct(protected DebugBarConfig $debugBar)
     {
         
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        // Add a debug message
-        $this->debugBar["messages"]->addMessage("Middleware invoked with request: " . $request->getUri());
+        $this->debugBar->start('app', 'Application Process');
+
+        $this->debugBar->message("Middleware invoked with request: " . $request->getUri());
 
         // Proceed to the next middleware or handler and get the response
         $response = $handler->handle($request);
@@ -48,6 +48,7 @@ class DebugBarMiddleware implements MiddlewareInterface
         // Create a new response with the modified body
         $response = $response->withBody(stream_for($body));
 
+        $this->debugBar->stop('app');
         return $response;
     }
 }
