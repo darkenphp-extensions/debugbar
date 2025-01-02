@@ -16,6 +16,10 @@ class DebugBarMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        // Render the DebugBar assets
+        $debugBarRenderer = $this->debugBar->getJavascriptRenderer();
+        $debugBarRenderer->setBaseUrl('/assets/debugbar');
+
         $this->debugBar->start('app', 'Application Process');
 
         $this->debugBar->message("Middleware invoked with request: " . $request->getUri());
@@ -23,12 +27,10 @@ class DebugBarMiddleware implements MiddlewareInterface
         // Proceed to the next middleware or handler and get the response
         $response = $handler->handle($request);
 
-        // Render the DebugBar assets
-        $debugBarRenderer = $this->debugBar->getJavascriptRenderer();
-        $debugBarRenderer->setBaseUrl('/assets/debugbar');
-
         // Inject the DebugBar head and body scripts into the response
         $body = (string) $response->getBody();
+
+        $this->debugBar->stop('app');
 
         $headInjection = $debugBarRenderer->renderHead();
         $bodyInjection = $debugBarRenderer->render();
@@ -48,7 +50,7 @@ class DebugBarMiddleware implements MiddlewareInterface
         // Create a new response with the modified body
         $response = $response->withBody(stream_for($body));
 
-        $this->debugBar->stop('app');
+        
         return $response;
     }
 }
