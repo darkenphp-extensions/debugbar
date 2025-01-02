@@ -16,11 +16,17 @@ class DebugBarMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $debugBar = $this->debugBar;
+
+        if (!$debugBar->isActive) {
+            return $handler->handle($request);
+        }
+
         // Render the DebugBar assets
-        $debugBarRenderer = $this->debugBar->getJavascriptRenderer();
+        $debugBarRenderer = $debugBar->getJavascriptRenderer();
         $debugBarRenderer->setBaseUrl('/assets/debugbar');
 
-        $this->debugBar->start('app', 'Application Process');
+        $this->debugBar->start('app', 'Application Request');
 
         $this->debugBar->message("Middleware invoked with request: " . $request->getUri());
 
