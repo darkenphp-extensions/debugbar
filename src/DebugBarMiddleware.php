@@ -10,11 +10,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class DebugBarMiddleware implements MiddlewareInterface
 {
-    private StandardDebugBar $debugBar;
-
-    public function __construct()
+    public function __construct(private StandardDebugBar $debugBar)
     {
-        $this->debugBar = new StandardDebugBar();
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -27,6 +24,7 @@ class DebugBarMiddleware implements MiddlewareInterface
 
         // Render the DebugBar assets
         $debugBarRenderer = $this->debugBar->getJavascriptRenderer();
+        $debugBarRenderer->setBaseUrl('/assets/debugbar');
 
         // Inject the DebugBar head and body scripts into the response
         $body = (string) $response->getBody();

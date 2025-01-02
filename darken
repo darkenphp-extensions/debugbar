@@ -6,6 +6,7 @@ use Darken\Config\ConfigHelperTrait;
 use Darken\Config\ConfigInterface;
 use Darken\Debugbar\DebugBarMiddleware;
 use Darken\Enum\MiddlewarePosition;
+use Darken\Events\AfterBuildEvent;
 use Darken\Service\ContainerService;
 use Darken\Service\ContainerServiceInterface;
 use Darken\Service\EventService;
@@ -14,10 +15,12 @@ use Darken\Service\ExtensionService;
 use Darken\Service\ExtensionServiceInterface;
 use Darken\Service\MiddlewareService;
 use Darken\Service\MiddlewareServiceInterface;
+use DebugBar\StandardDebugBar;
+use Yiisoft\Files\FileHelper;
 
 require __DIR__ . '/vendor/autoload.php';
 
-$config = new class implements ConfigInterface, ContainerServiceInterface, EventServiceInterface, MiddlewareServiceInterface, ExtensionServiceInterface {
+$config = new class implements ConfigInterface, ContainerServiceInterface, EventServiceInterface, MiddlewareServiceInterface {
 
     use ConfigHelperTrait;
 
@@ -40,18 +43,40 @@ $config = new class implements ConfigInterface, ContainerServiceInterface, Event
      */
     public function events(EventService $service): EventService
     {
-        return $service;
+        return $service->on(AfterBuildEvent::class, function (AfterBuildEvent $event) {
+            // how could we directly get acces to public folder?
+            $assetsFolder = $event->app->config->getRootDirectoryPath() . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'assets';
+
+            //if (!file_exists($assetsFolder)) {
+            //    return;
+            //}
+
+            $assetsVendor = $assetsFolder . DIRECTORY_SEPARATOR . 'debugbar';
+            FileHelper::ensureDirectory($assetsVendor);
+
+            $jsRenderer = $this->getDebugBar()->getJavascriptRenderer();
+            //$jsRenderer->setBasePath('/Resources/vendor/');
+            
+            $assets = $jsRenderer->getAssets();
+
+            foreach ($assets as $types) {
+                foreach ($types as $file) {
+                    $sourceFile = $file;
+
+                    $targetFile = str_replace($jsRenderer->getBasePath(), '', $sourceFile);
+                    
+                    echo $sourceFile . ' -> ' . $targetFile . PHP_EOL;
+
+                    FileHelper::copyFile($sourceFile, $assetsVendor . DIRECTORY_SEPARATOR . $targetFile);
+                }
+            }
+        });
     }
 
-    /**
-     * Register extensions to be used in the application.
-     * 
-     * If no extensions are required, this method and the `ExtensionServiceInterface`
-     * can be safely removed.
-     */
-    public function extensions(ExtensionService $service): ExtensionService
+    public function getDebugBar() : StandardDebugBar
     {
-        return $service;
+        // use di ... but for now
+        return new StandardDebugBar();
     }
 
     /**
@@ -62,7 +87,7 @@ $config = new class implements ConfigInterface, ContainerServiceInterface, Event
      */
     public function middlewares(MiddlewareService $service): MiddlewareService
     {
-        return $service->add(new DebugBarMiddleware(), MiddlewarePosition::AFTER);
+        return $service->add(new DebugBarMiddleware($this->getDebugBar()), MiddlewarePosition::AFTER);
     }
 
     /**
