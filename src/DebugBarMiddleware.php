@@ -11,7 +11,7 @@ class DebugBarMiddleware implements MiddlewareInterface
 {
     public function __construct(protected DebugBarConfig $debugBar)
     {
-        
+
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -56,7 +56,7 @@ class DebugBarMiddleware implements MiddlewareInterface
         // Create a new response with the modified body
         $response = $response->withBody(stream_for($body));
 
-        
+
         return $response;
     }
 }

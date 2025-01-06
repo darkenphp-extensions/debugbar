@@ -99,5 +99,7 @@ $config = new class implements ConfigInterface, ContainerServiceInterface, Event
     }
 };
 
-(new Application($config))
+$exitCode = (new Application($config))
     ->run();
+
+exit($exitCode);

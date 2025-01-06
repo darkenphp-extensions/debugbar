@@ -13,21 +13,21 @@ class DebugBarConfig extends StandardDebugBar
         parent::__construct();
     }
 
-    public function start($name, $label = null) : self
+    public function start($name, $label = null): self
     {
         $this['time']->startMeasure($name, $label);
 
         return $this;
     }
 
-    public function stop($name) : self
+    public function stop($name): self
     {
         $this['time']->stopMeasure($name);
 
         return $this;
     }
 
-    public function config(ConfigInterface $config) : self
+    public function config(ConfigInterface $config): self
     {
         $data = [
             'getDebugMode' => $config->getDebugMode(),
@@ -41,9 +41,9 @@ class DebugBarConfig extends StandardDebugBar
 
         return $this;
     }
-    
 
-    public function message($message, $label = 'info') : self
+
+    public function message($message, $label = 'info'): self
     {
         $this['messages']->addMessage($message, $label);
 

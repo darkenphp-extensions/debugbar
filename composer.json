@@ -6,15 +6,21 @@
         "darkenphp/framework": "dev-main",
         "maximebf/debugbar": "^1.23"
     },
+    "require-dev": {
+        "phpstan/phpstan": "^2.1",
+        "friendsofphp/php-cs-fixer": "^3.66"
+    },
     "autoload": {
         "psr-4": {
-            "Darken\\Debugbar\\Build\\" : ".build",
-            "Darken\\Debugbar\\" : "src"
+            "Darken\\Debugbar\\Build\\": ".build",
+            "Darken\\Debugbar\\": "src"
         }
     },
     "scripts": {
         "build": "@php darken build --clear",
-        "watch": "@php darken watch --clear"
+        "watch": "@php darken watch --clear",
+        "phpstan": "@php vendor/bin/phpstan analyse src .build --level=5",
+        "cs": "@php vendor/bin/php-cs-fixer fix src --rules=@PSR12"
     },
     "config": {
         "process-timeout": 0

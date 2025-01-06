@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Darken\Debugbar;
 
@@ -28,7 +28,7 @@ class SaveAssetsAfterBuild implements EventInterface
         $dbbar = new StandardDebugBar();
         $jsRenderer = $dbbar->getJavascriptRenderer();
         //$jsRenderer->setBasePath('/Resources/vendor/');
-        
+
         $assets = $jsRenderer->getAssets();
 
         $count = 0;
@@ -37,7 +37,7 @@ class SaveAssetsAfterBuild implements EventInterface
                 $sourceFile = $file;
 
                 $targetFile = str_replace($jsRenderer->getBasePath(), '', $sourceFile);
-                
+
                 //echo $sourceFile . ' -> ' . $targetFile . PHP_EOL;
                 $count++;
                 FileHelper::copyFile($sourceFile, $assetsVendor . DIRECTORY_SEPARATOR . $targetFile);
